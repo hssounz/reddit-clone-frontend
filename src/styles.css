@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('http://netdna.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css');
+@import '~node_modules/angular-notifier/styles';
 html{    
     padding: 0;
     height: 100%;  
