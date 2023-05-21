@@ -4,6 +4,8 @@ import { AuthService } from "./auth.service";
 import { Observable,catchError, throwError, BehaviorSubject } from 'rxjs';
 import {switchMap, filter, take} from 'rxjs/operators'
 import { LoginResponse } from "src/app/interface/login-response";
+import { CustomResponse } from "src/app/interface/custom-response";
+import { LocalStorageService } from 'angular-web-storage';
 
 
 @Injectable()
@@ -13,14 +15,17 @@ export class TokenInterceptor implements HttpInterceptor {
     refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject(null)
 
     constructor(
-        private authService: AuthService
+        private authService: AuthService,
+        private localStorageService: LocalStorageService
     ){}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     
         const loginUri = "/auth/login";
-        const signupUri = "/auth/signup"
-        if (req.url.search(loginUri) === -1 && req.url.search(signupUri) === -1) {
+        const signupUri = "/auth/signup";
+        const refreshUri = "/refresh/token";
+
+        if (req.url.search(loginUri) === -1 && req.url.search(signupUri) === -1 && req.url.search(refreshUri) === -1) {
             const authRequest = req.clone({
                 setHeaders: {
                 Authorization: `Bearer ${this.authService.getAuthorizationToken()}`
@@ -28,7 +33,7 @@ export class TokenInterceptor implements HttpInterceptor {
               });
               return next.handle(authRequest).pipe(
                   catchError(error => {
-                      if(error instanceof HttpErrorResponse && error.status === 403) {
+                      if(error instanceof HttpErrorResponse) {
                           return this.handleAuthErrors(req, next);
                       } else {
                           return throwError(error)
@@ -45,9 +50,10 @@ export class TokenInterceptor implements HttpInterceptor {
             this.refreshTokenSubject.next(null);
 
                 return this.authService.refreshToken().pipe(
-                    switchMap((refreshTokenResponse: LoginResponse) => {
+                    switchMap((refreshTokenResponse: CustomResponse<LoginResponse>) => {
                         this.isTokenRefreshing = false;
-                        this.refreshTokenSubject.next(refreshTokenResponse.User.accessToken);
+                        this.refreshTokenSubject.next(refreshTokenResponse.data?.User.refreshToken);
+                        this.localStorageService.set('accessToken', refreshTokenResponse.data?.User.accessToken);
                         const authRequest = req.clone({
                             setHeaders: {
                               Authorization: `Bearer ${this.authService.getAuthorizationToken()}`

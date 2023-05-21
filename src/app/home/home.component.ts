@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomResponse } from '../interface/custom-response';
 import { PostModel } from '../interface/post-model';
 import { PostsService } from '../shared/posts.service';
 import { NotifierService } from 'angular-notifier';
@@ -11,16 +10,15 @@ import { NotifierService } from 'angular-notifier';
 })
 export class HomeComponent implements OnInit {
 
-  posts$: CustomResponse<PostModel[]>;
+  posts: Array<PostModel>;
 
   constructor(
     private postService: PostsService,
     private notif: NotifierService
   ) {
     this.postService.getAllPosts().subscribe(posts => {
-      this.posts$ = posts; console.log(posts);
+      this.posts = posts.data?.Posts || []; 
     }, err => {
-      
       this.notif.notify('error', err.message);
     });
   }

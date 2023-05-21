@@ -15,8 +15,9 @@ export class PostsService {
     private http: HttpClient
   ) { }
 
-  getAllPosts(): Observable<CustomResponse<PostModel[]>> {
-    return this.http.get<CustomResponse<PostModel[]>>("http://localhost:8088/api/posts/all").pipe(
+  getAllPosts(): Observable<CustomResponse<{Posts: PostModel[]}>> {
+    return this.http.get<CustomResponse<{Posts: PostModel[]}>>("http://localhost:8088/api/posts/all").pipe(
+
       catchError(this.handleError)
     );
   }

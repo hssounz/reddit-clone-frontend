@@ -7,7 +7,7 @@ import { CustomResponse } from 'src/app/interface/custom-response';
 import { SignupResponse } from 'src/app/interface/signup-response';
 import { LoginRequestPayload } from 'src/app/interface/login-request-payload';
 import { LoginResponse } from 'src/app/interface/login-response';
-import { LocalStorageService, SessionStorageService, LocalStorage, SessionStorage } from 'angular-web-storage';
+import { LocalStorageService } from 'angular-web-storage';
 
 
 @Injectable({
@@ -52,14 +52,13 @@ export class AuthService {
   }
 
   refreshToken(){
-    return this.http.post<LoginResponse>(
+    return this.http.post<CustomResponse<LoginResponse>>(
       `${this.apiUrl}/refresh/token`, 
         {
           refreshToken: this.localStorageService.get('refreshToken'),
           username: this.localStorageService.get('username')
         }
-      )
-      
+      );
   }
 
   getRefreshToken(){
