@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { SignupRequestPayload } from './signup-request-payload';
+import { SignupRequestPayload } from '../../interface/signup-request-payload';
 import { AuthService } from '../shared/auth.service';
 import { NotifierService } from 'angular-notifier';
 

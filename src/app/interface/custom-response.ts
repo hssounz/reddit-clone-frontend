@@ -2,8 +2,8 @@ export interface CustomResponse<T> {
     timeStamp: Date
     statusCode: number
     status: string
-    reason: string
+    reason?: string
     message: string
-    developerMessage: string
+    developerMessage?: string
     data?: T
 }
